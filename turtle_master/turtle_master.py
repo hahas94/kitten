@@ -14,8 +14,6 @@ Solution:
   as the last action in the sequence is performed then solution is found, else 
   no solution.
 """
-from enum import Enum
-from dataclasses import dataclass
 from typing import Tuple
 
 from components import Direction, Action, TileType, Tile, Turtle, Board
