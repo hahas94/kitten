@@ -17,6 +17,7 @@ class OutOfBorderError(Exception):
 
 
 class Direction(Enum):
+    """The possible facing directions of the turtle agent."""
     RIGHT = 0
     UP = 1
     LEFT = 2
@@ -24,6 +25,7 @@ class Direction(Enum):
 
 
 class Action(Enum):
+    """The possible actions of the turtle agent."""
     LEFT = 'L'
     RIGHT = 'R'
     FORWARD = 'F'
@@ -31,6 +33,7 @@ class Action(Enum):
 
 
 class TileType(Enum):
+    """The possible tile types in the game board."""
     EMPTY = '.'
     ICE = 'I'
     CASTLE = 'C'
@@ -57,13 +60,20 @@ class Board:
         Create a board instance from a sequence of rows,
         each provided as a string.
         """
-        self._board: List[List[Tile]] = [
-            [Tile(row=r, col=c, type=TileType(rows_tuple[r][c])) for c in range(len(rows_tuple[r]))]
-            for r in range(len(rows_tuple))
-        ]
+        self._max_row = len(rows_tuple)
+        self._max_col = len(rows_tuple[0])
+        self._goal_r, self._goal_c = None, None
 
-        self._max_row = len(self._board)
-        self._max_col = len(self._board[0])
+        self._board: List[List[Tile]] = []
+
+        for r in range(self._max_row):
+            row = []
+            for c in range(self._max_col):
+                tile = Tile(row=r, col=c, type=TileType(rows_tuple[r][c]))
+                row.append(tile)
+                if tile.type == TileType.DIMOND:
+                    self._goal_r, self._goal_c = r, c
+            self._board.append(row)
 
     def __getitem__(self, indices: Tuple[int, int]) -> Tile:
         """Access a single tile using row and column data."""
@@ -84,6 +94,10 @@ class Board:
         """Turn an ice castle into empty tile."""
         new_tile = Tile(row, col, TileType.EMPTY)
         self._board[row][col] = new_tile
+
+    def get_goal_loc(self) -> (int, int):
+        """Get the row and column position of the diamond."""
+        return self._goal_r, self._goal_c
 
 
 @dataclass
