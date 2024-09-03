@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 components.py
 -------------
@@ -7,8 +9,8 @@ Description:
 """
 
 from enum import Enum
-from dataclasses import dataclass
-from typing import Tuple
+from dataclasses import dataclass, field
+from typing import Tuple, Union, List
 
 
 class OutOfBorderError(Exception):
@@ -52,48 +54,45 @@ class Tile:
     type: TileType
 
 
+@dataclass
 class Board:
     """Representation of the game board constructed as a matrix of Tiles."""
+    rows_tuple: Tuple[str] = field(repr=False, hash=False, compare=False)
+    board: List[List[Tile]] = field(init=False)
+    max_row: int = field(init=False)
+    max_col: int = field(init=False)
 
-    def __init__(self, rows_tuple: Tuple[str]):
+    def __post_init__(self):
         """
         Create a board instance from a sequence of rows,
         each provided as a string.
         """
-        self._max_row = len(rows_tuple)
-        self._max_col = len(rows_tuple[0])
+        self.max_row = len(self.rows_tuple)
+        self.max_col = len(self.rows_tuple[0])
         self._goal_r, self._goal_c = None, None
 
-        self._board: List[List[Tile]] = []
+        self.board: List[List[Tile]] = []
 
-        for r in range(self._max_row):
+        for r in range(self.max_row):
             row = []
-            for c in range(self._max_col):
-                tile = Tile(row=r, col=c, type=TileType(rows_tuple[r][c]))
+            for c in range(self.max_col):
+                tile = Tile(row=r, col=c, type=TileType(self.rows_tuple[r][c]))
                 row.append(tile)
                 if tile.type == TileType.DIMOND:
                     self._goal_r, self._goal_c = r, c
-            self._board.append(row)
+            self.board.append(row)
 
     def __getitem__(self, indices: Tuple[int, int]) -> Tile:
         """Access a single tile using row and column data."""
         row, col = indices  # Unpack the tuple
-        if not (0 <= row < self._max_row) or not (0 <= col < self._max_col):
+        if not (0 <= row < self.max_row) or not (0 <= col < self.max_col):
             raise IndexError("Tile indices are out of range")
-        return self._board[row][col]
-
-    @property
-    def max_row(self):
-        return self._max_row
-
-    @property
-    def max_col(self):
-        return self._max_col
+        return self.board[row][col]
 
     def update_ice_tile(self, row: int, col: int):
         """Turn an ice castle into empty tile."""
         new_tile = Tile(row, col, TileType.EMPTY)
-        self._board[row][col] = new_tile
+        self.board[row][col] = new_tile
 
     def get_goal_loc(self) -> (int, int):
         """Get the row and column position of the diamond."""
@@ -161,5 +160,6 @@ class Turtle:
             # row and col were not updated, because it would be out of border
             raise OutOfBorderError
         return row, col
+
 
 # =============== END OF FILE ===============
