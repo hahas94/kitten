@@ -162,4 +162,36 @@ class Turtle:
         return row, col
 
 
+@dataclass(frozen=True)
+class Node:
+    """
+    Node class, for creating the search graph. It has a parent node,
+    cost of getting to current position, estimated cost
+    to goal position, last executed action, the current tile
+    the agent is on and the agent's direction, as well as a list of
+    all locations that have been fired at previously on a specific path.
+    The game state is represented by the tile and the agent direction, which
+    can be used for testing equality between Node instances.
+    """
+    path_cost: float = field(hash=False, compare=False)
+    heuristic_cost: float = field(hash=False, compare=False)
+    action: Union[Action, None] = field(hash=False, compare=False)
+    tile: Tile = field(hash=True, compare=True)
+    agent_dir: Direction = field(hash=True, compare=True)
+    parent: Union[Node, None] = field(hash=False, compare=False)
+    fired_locations: Tuple[Tuple[int, int]] = field(default_factory=tuple, hash=False, compare=False)
+
+    def __lt__(self, other: Node) -> bool:
+        return self.path_cost + self.heuristic_cost < other.path_cost + other.heuristic_cost
+
+    def __le__(self, other: Node) -> bool:
+        return self.path_cost + self.heuristic_cost <= other.path_cost + other.heuristic_cost
+
+    def __gt__(self, other: Node) -> bool:
+        return self.path_cost + self.heuristic_cost > other.path_cost + other.heuristic_cost
+
+    def __ge__(self, other: Node) -> bool:
+        return self.path_cost + self.heuristic_cost >= other.path_cost + other.heuristic_cost
+
+
 # =============== END OF FILE ===============
