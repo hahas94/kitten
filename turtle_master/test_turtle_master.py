@@ -1,6 +1,7 @@
 import unittest
 from components import Action, TileType, Tile, Turtle, Direction, Board
 from turtle_master import is_solution_valid
+from robot_turtles import create_node, create_plan, a_star_search
 
 
 # Unit tests for the Turtle class
@@ -268,6 +269,286 @@ class TestValidSolutions(unittest.TestCase):
         """Sequence of actions move out of border facing up."""
         actions = tuple(map(lambda s: Action(s), 'LFFFFFFRFFFFFLFFF'))
         self.assertFalse(is_solution_valid(self.turtle, actions, self.board))
+
+
+class TestSearchAlgorithm(unittest.TestCase):
+    def test_example_0(self):
+        """Easy board."""
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "........",  # Row 2
+            "...CC...",  # Row 3
+            "....D...",  # Row 4
+            "........",  # Row 5
+            "..IC....",  # Row 6
+            "T.C....."   # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 9)
+        self.assertEqual(plan, 'FLFFFRFFF')
+
+    def test_example_1(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "........",  # Row 2
+            "...CC...",  # Row 3
+            "C...D...",  # Row 4
+            "C...C...",  # Row 5
+            "C.IC....",  # Row 6
+            "T.C....."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 9)
+        self.assertEqual(plan, 'FLFFFRFFF')
+
+    def test_example_2(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "........",  # Row 2
+            "...CC...",  # Row 3
+            "C...D...",  # Row 4
+            ".CCCC...",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 13)
+        self.assertEqual(plan, 'FFFFLFRFLFFLF')
+
+    def test_example_3(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "........",  # Row 2
+            "...C....",  # Row 3
+            "C..CDC.C",  # Row 4
+            ".CCCCC.C",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 18)
+        self.assertEqual(plan, 'FFFFLFRFFLFFFLFFLF')
+
+    def test_example_4(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            ".....C..",  # Row 2
+            "...C.C..",  # Row 3
+            "C..CDC.C",  # Row 4
+            "..CCCCCC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 14)
+        self.assertEqual(plan, 'FLFFFFFRFFFRFF')
+
+    def test_example_5(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            ".....C..",  # Row 2
+            "...C.C..",  # Row 3
+            "C..CDC.C",  # Row 4
+            ".C.CCCCC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 15)
+        self.assertEqual(plan, 'FFLXFFFFFRFFRFF')
+    
+    def test_example_6(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "....IC..",  # Row 2
+            "...CIC..",  # Row 3
+            "CIICDC.C",  # Row 4
+            ".C.CCCCC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 18)
+        self.assertEqual(plan, 'FFLXFFXFFFRFXFRXFF')
+
+    def test_example_7(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "....IC..",  # Row 2
+            "...CIC..",  # Row 3
+            "CIICDC.C",  # Row 4
+            ".C.CCCIC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 18)
+        self.assertEqual(plan, 'FFLXFFXFFFRFXFRXFF')
+
+    def test_example_8(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            "....CC..",  # Row 2
+            "...CIC..",  # Row 3
+            "CIICDC.C",  # Row 4
+            ".C.CCCIC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        self.assertIsNone(solution_node)
+
+    def test_example_9(self):
+        rows_tuple = (
+            "......CD",  # Row 0
+            "......CC",  # Row 1
+            "....CC..",  # Row 2
+            "...CIC..",  # Row 3
+            "CIIC.C.C",  # Row 4
+            ".C.CCCIC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        self.assertIsNone(solution_node)
+
+    def test_example_10(self):
+        rows_tuple = (
+            "......C.",  # Row 0
+            "D.....CC",  # Row 1
+            "....CC..",  # Row 2
+            ".CCCIC..",  # Row 3
+            "CIIC.C.C",  # Row 4
+            ".C.CCCIC",  # Row 5
+            "C.IC....",  # Row 6
+            "T....C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        self.assertIsNone(solution_node)
+
+    def test_example_11(self):
+        rows_tuple = (
+            "......C.",  # Row 0
+            "......CC",  # Row 1
+            "....CC..",  # Row 2
+            ".CCCIC..",  # Row 3
+            "CIIC.C.C",  # Row 4
+            ".C.CCCIC",  # Row 5
+            "C.IC..C.",  # Row 6
+            "T....C.D"  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        self.assertIsNone(solution_node)
+
+    def test_example_12(self):
+        rows_tuple = (
+            "........",  # Row 0
+            "........",  # Row 1
+            ".....C..",  # Row 2
+            "...C.C..",  # Row 3
+            "C..C.C.C",  # Row 4
+            ".C.CCCCC",  # Row 5
+            "C.IC....",  # Row 6
+            "TD...C.."  # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 1)
+        self.assertEqual(plan, 'F')
+
+    def test_example_13(self):
+        rows_tuple = (
+            ".......D",  # Row 0
+            "........",  # Row 1
+            "........",  # Row 2
+            "........",  # Row 3
+            "........",  # Row 4
+            "........",  # Row 5
+            "........",  # Row 6
+            "T......."   # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 15)
+        self.assertEqual(plan, 'FFFFFFFLFFFFFFF')
+
+    def test_example_14(self):
+        rows_tuple = (
+            "......CD",  # Row 0
+            ".......C",  # Row 1
+            "........",  # Row 2
+            "........",  # Row 3
+            "........",  # Row 4
+            "........",  # Row 5
+            "........",  # Row 6
+            "T......."   # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        self.assertIsNone(solution_node)
+
+    def test_example_15(self):
+        rows_tuple = (
+            "IIIIIICD",  # Row 0
+            "IIIIIIIC",  # Row 1
+            "IIIIIIII",  # Row 2
+            "IIIIIIII",  # Row 3
+            "IIIIIIII",  # Row 4
+            "IIIIIIII",  # Row 5
+            "IIIIIIII",  # Row 6
+            "TIIIIIII"   # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        self.assertIsNone(solution_node)
+
+    def test_example_16(self):
+        rows_tuple = (
+            "IIIIIIID",  # Row 0
+            "IIIIIIII",  # Row 1
+            "IIIIIIII",  # Row 2
+            "IIIIIIII",  # Row 3
+            "IIIIIIII",  # Row 4
+            "IIIIIIII",  # Row 5
+            "IIIIIIII",  # Row 6
+            "TIIIIIII"   # Row 7
+        )
+        board = Board(rows_tuple)
+        solution_node = a_star_search(board)
+        plan = create_plan(solution_node)
+        self.assertEqual(solution_node.path_cost, 28)
+        self.assertEqual(plan, 'XFXFXFXFXFXFXFLXFXFXFXFXFXFF')
 
 
 # Run the unit tests
