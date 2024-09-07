@@ -13,8 +13,7 @@ Solution:
   actions, or state that it is not possible. The algorithm expands
   nodes successively until reaching the goal. Each node has a state
   that can be compared to other nodes, where the state is the location
-  of the agent and its facing, together with the ice castle positions
-  that have already been fired at.
+  of the agent and its facing.
   Moreover, the Manhattan distance is used as a heuristic for estimating
   the distance between any position and the goal position.
 """
