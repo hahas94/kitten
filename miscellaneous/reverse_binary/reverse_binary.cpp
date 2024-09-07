@@ -20,7 +20,7 @@
 int main() {
   unsigned long num;
   std::cin >> num;
-  std::string binary_number {to_binary_v2(num)};
+  std::string binary_number {to_binary(num)};
   std::ranges::reverse(binary_number);
   unsigned long decimal {to_decimal(binary_number)};
   std::cout << decimal << std::endl;
