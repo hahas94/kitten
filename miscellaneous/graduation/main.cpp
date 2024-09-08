@@ -49,9 +49,9 @@ int main(){
 		column = columns_classes.at(col);
 		prev_size = colored_classes.size();
 		std::ranges::set_union(colored_classes, 
-													 column, 
-													 std::inserter(colored_classes, colored_classes.end())
-													 );
+			column, 
+			std::inserter(colored_classes, colored_classes.end())
+			);
 
 		if(prev_size < colored_classes.size() && !colored_columns.contains(col)){
 			colored_columns.insert(col);
@@ -61,15 +61,15 @@ int main(){
 		for(std::size_t next_col = col + 1; next_col < n_cols; next_col++){
 			column = columns_classes.at(next_col);
 			std::ranges::set_intersection(colored_classes, 
-																		column, 
-																		std::inserter(intersected_classes, intersected_classes.begin())
-																		);
+				column, 
+				std::inserter(intersected_classes, intersected_classes.begin())
+				);
 			if(intersected_classes.size() > 0){
 				colored_columns.insert(next_col);
 				std::ranges::set_union(colored_classes, 
-													     column, 
-													     std::inserter(colored_classes, colored_classes.end())
-													     );
+					column, 
+					std::inserter(colored_classes, colored_classes.end())
+					);
 			}
 			intersected_classes.clear();
 		}
