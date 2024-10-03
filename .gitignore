@@ -200,3 +200,6 @@ cython_debug/
 .idea/
 
 .vscode/
+
+# ignore the submission file
+submission.cpp
