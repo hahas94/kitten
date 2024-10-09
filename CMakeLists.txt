@@ -18,6 +18,3 @@ add_subdirectory(algorithms)
 # Add each problem category folder
 add_subdirectory(dynamic_programming)
 add_subdirectory(greedy)
-
-# Add tests folder
-# add_subdirectory(tests)
