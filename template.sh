@@ -1,45 +1,48 @@
 #!/bin/bash
 
-# Usage: ./template.sh file_name problem_name kattis_problem_name
+# Use this file for generating template code for solving a problem.
+# Each new problem will be within its directory, and this directory 
+# will itself belong to a problem category. Thus pass both problem name
+# and name of problem category directory. 
+# Sample input and output files are created as well, and relevant cmake
+# files will be updated.
 
+# Run from root of project.
+# Usage: ./template.sh dir_name problem_name
 
-file_name=$1  # used in file names
-problem_name=$2  # Used in normal text
-kattis_problem_name=$3
+dir_name=$1
+problem_name=$2
 
+# Check if the problem category directory exists
+if [ ! -d "$dir_name" ]; then
+    # If it doesn't exist, create it
+    mkdir -p "$dir_name"
+    # create a cmake file within it
+    touch "$dir_name/CMakeLists.txt"
+    echo "add_subdirectory(dir_name)" >> "CMakeLists.txt"
+fi
 
-# Create C++ file with boilerplate code
-header_file="$file_name.hpp"
-implementation_file="$file_name.cpp"
-main_file="main.cpp"
+echo "add_subdirectory($problem_name)" >> "$dir_name/CMakeLists.txt"
 
-# Insert template code into the implementation file.
-touch $implementation_file
-cat <<EOT >> $implementation_file
-/**
- * $implementation_file
- * ------------------
- * Description:
- *   Implementation file containing definitions for the $problem_name problem. 
- * */
+mkdir -p "$dir_name/$problem_name"
+touch "$dir_name/$problem_name/CMakeLists.txt"
+cat <<EOT >> $dir_name/$problem_name/CMakeLists.txt
+# Add an executable for the $problem_name problem
+add_executable($problem_name main.cpp)
 
-#include "$header_file"
-
-void solve(){
-    std::cout << "Solution code..." << std::endl;
-}
-
-// ============== END OF FILE ==============
-
+# Link the algorithms library
+target_link_libraries($problem_name PRIVATE algorithms -fsanitize=undefined -fsanitize=address)
 EOT
 
-# Insert template code into the main file.
-touch $main_file
-cat <<EOT >> $main_file
+touch "$dir_name/$problem_name/main.cpp"
+touch "$dir_name/$problem_name/sample.in"
+touch "$dir_name/$problem_name/sample.output"
+
+cat <<EOT >> $dir_name/$problem_name/main.cpp
 /**
 * main.cpp
  * -----------------
- * $problem_name (https://open.kattis.com/problems/$kattis_problem_name):
+ * $problem_name (https://open.kattis.com/problems/$problem_name):
  *   
  *
  * Solution:
@@ -47,7 +50,7 @@ cat <<EOT >> $main_file
  *
  **/
  
-#include "$header_file"
+#include "../../algorithms/$dir_name.hpp"
 
 int main() {
     std::ios::sync_with_stdio(false);
@@ -60,24 +63,4 @@ int main() {
 
 EOT
 
-# Insert template code into the header file.
-touch $header_file
-cat <<EOT >> $header_file
-/**
- * $header_file
- * ------------------
- * Description:
- *   Header file containing declarations for the $problem_name problem. 
- * */
- 
-#include <iostream>
-
-// ============== END OF FILE ==============
-
-EOT
-
-# Create input and output files
-touch sample.in
-touch sample.out
-
-echo "Created template files. Done!"
+echo "Created template files."
