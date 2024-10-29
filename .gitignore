@@ -41,6 +41,7 @@ __pycache__/
 # build dir
 **/build
 **/cmake-build-editor
+cmake-build-debug/
 
 valgrind.out.dSYM/
 
