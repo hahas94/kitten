@@ -12,9 +12,16 @@ add_compile_options(-Wall -Wextra -Werror -Wfatal-errors -Wpedantic
                     -D_GLIBCXX_DEBUG -fmax-errors=1 
                     -fsanitize=undefined -fsanitize=address)
 
+
+enable_testing()
+
+# include tests folder
+add_subdirectory(tests)
+
 # Add the algorithms folder as a library
 add_subdirectory(algorithms)
 
 # Add each problem category folder
 add_subdirectory(dynamic_programming)
 add_subdirectory(greedy)
+add_subdirectory(miscellaneous)
