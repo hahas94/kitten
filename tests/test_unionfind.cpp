@@ -1,6 +1,15 @@
 #include <catch2/catch_test_macros.hpp>
 #include "unionfind.hpp"
 
+// helper function to test move constructor/assignment
+UnionFind create_unionfind(){
+		UnionFind uf{10};
+        uf.join(1, 0);
+        uf.join(4, 3);
+        uf.join(1, 3);
+		return uf;
+}
+
 TEST_CASE( "UnionFind::same" ) {
     int n {6};
     UnionFind uf {UnionFind(n)};
@@ -13,7 +22,60 @@ TEST_CASE( "UnionFind::same" ) {
     }
 }
 
-TEST_CASE( "UnionFind::join" ) {
+TEST_CASE( "copy constructor" ) {
+    int n {6};
+    UnionFind uf {UnionFind(n)};
+
+    uf.join(2, 3);
+    uf.join(1, 5);
+    uf.join(1, 2);
+
+    UnionFind uf2 {uf};
+
+
+    for(int i = 0; i < n; i++){
+        REQUIRE(uf.find(i) == uf2.find(i));
+    }
+
+    REQUIRE(uf.size() == uf2.size());
+}
+
+TEST_CASE( "copy assignment" ) {
+    int n {6};
+    UnionFind uf {UnionFind(n)};
+    UnionFind uf2 {UnionFind(3)};
+
+    uf.join(2, 3);
+    uf.join(1, 5);
+    uf.join(1, 2);
+
+    uf2 = uf;
+
+
+    for(int i = 0; i < n; i++){
+        REQUIRE(uf.find(i) == uf2.find(i));
+    }
+
+    REQUIRE(uf.size() == uf2.size());
+}
+
+TEST_CASE( "move constructor" ) {
+    UnionFind uf {create_unionfind()};
+
+    REQUIRE(uf.size() == 10);
+    REQUIRE(uf.same(0, 1));
+    REQUIRE_FALSE(uf.same(5, 1));
+}
+
+TEST_CASE( "move assignment" ) {
+    UnionFind uf {UnionFind(3)};
+    uf = create_unionfind();
+    REQUIRE(uf.size() == 10);
+    REQUIRE(uf.same(0, 1));
+    REQUIRE_FALSE(uf.same(5, 1));
+}
+
+TEST_CASE( "join(), same()" ) {
     int n {6};
     UnionFind uf {UnionFind(n)};
     // [{0}, {1}, {2}, {3}, {4}, {5}]
