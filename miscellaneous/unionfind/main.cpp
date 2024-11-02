@@ -2,10 +2,11 @@
 * main.cpp
  * -------
  * Union Find (https://open.kattis.com/problems/unionfind):
+ *  Application of the Union Find data structure.
  *   
  *
  * Solution:
- *   
+ *  The problem is solved aptly by implementing the unionfind data structure. *   
  *
  **/
  
