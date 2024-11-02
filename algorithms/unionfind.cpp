@@ -31,9 +31,92 @@ UnionFind::UnionFind(int n)
         }
     }
 
+UnionFind::~UnionFind(){
+    // Included for interface completness.
+}
+
+
+/**
+ * @brief Copy constructor operator.
+ * 
+ * @param other: an object to deep copy. 
+ */
+UnionFind::UnionFind(const UnionFind& other)
+    : N{other.size()}, parents{std::make_unique<int[]>(other.size())}, 
+      sizes{std::make_unique<int[]>(other.size())}
+    {
+        for(int i = 0; i < N; i++){
+            parents[i] = other.parents[i];
+            sizes[i] = other.sizes[i];
+        }
+    }
+
+/**
+ * @brief Copy assignment operator.
+ * 
+ * @param other: object to copy 
+ * @return UnionFind&: the object itself 
+ */
+UnionFind& UnionFind::operator=(const UnionFind& other){
+    if(this != &other){
+        UnionFind temp {other};
+        std::swap(N, temp.N);
+        std::swap(parents, temp.parents);
+        std::swap(sizes, temp.sizes);
+    }
+
+    return *this;
+}
+
+/**
+ * @brief Move constructor operator.
+ * 
+ * @param other: temporary UnionFind object 
+ */
+UnionFind::UnionFind(UnionFind&& other) noexcept
+    : N{other.N}, parents{std::move(other.parents)}, sizes{std::move(other.sizes)} {
+        other.N = 0;
+    }
+
+/**
+ * @brief Move assignment operator
+ * 
+ * @param other: a temporary object to steal content from. 
+ * @return UnionFind& 
+ */
+UnionFind& UnionFind::operator=(UnionFind&& other) noexcept{
+    if(this != &other){
+        N = other.N;
+        parents = std::move(other.parents); 
+        sizes = std::move(other.sizes);
+        other.N = 0;
+    }
+
+    return *this;
+}
+
+/**
+ * @brief Find and return the set that x belongs to. It returns the root of the tree set.
+ * 
+ * @param x: en element 
+ * @throws std::out_of_range: if x is out of range
+ * @return int: the root of the tree set x belongs to.
+ */
+int UnionFind::find(int x){
+    checkIndex(x);
+    
+    int elem {x};
+    while(parents[elem] != elem){
+        parents[elem] = parents[parents[elem]];  // makes tree flat
+        elem = parents[elem];
+    }
+
+    return elem;
+}
+
 /**
  * @brief Take the union of the two sets containing x and y respectively.
- *        The smaller set will become a child of the larger tree set.
+ *        The smaller (in height) set will become a child of the larger tree set.
  * 
  * @param x: first element 
  * @param y: second element 
@@ -67,19 +150,24 @@ bool UnionFind::same(int x, int y){
 }
 
 /**
- * @brief Find and return the set that x belongs to. It returns the root of the tree set.
+ * @brief Return total number of elements.
  * 
- * @param x: en element 
- * @return int: the root of the tree set x belongs to.
+ * @return int: number of elements 
  */
-int UnionFind::find(int x){
-    int elem {x};
-    while(parents[elem] != elem){
-        parents[elem] = parents[parents[elem]];  // makes tree flat
-        elem = parents[elem];
-    }
-
-    return elem;
+int UnionFind::size() const{
+    return N;
 }
+
+/**
+ * @brief Check that an index is within range. Throw out of range error if it fails.
+ * 
+ * @param index 
+ */
+constexpr void UnionFind::checkIndex(int index) const {
+    if (index >= N || index < 0) {
+        throw std::out_of_range("Index" + std::to_string(index) + " is out of range.");
+    }
+}
+
 // ============== END OF FILE ==============
 
