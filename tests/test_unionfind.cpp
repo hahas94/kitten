@@ -75,7 +75,7 @@ TEST_CASE( "move assignment" ) {
     REQUIRE_FALSE(uf.same(5, 1));
 }
 
-TEST_CASE( "join(), same()" ) {
+TEST_CASE( "join, same" ) {
     int n {6};
     UnionFind uf {UnionFind(n)};
     // [{0}, {1}, {2}, {3}, {4}, {5}]
