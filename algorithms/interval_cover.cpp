@@ -13,14 +13,14 @@
  *   unneccesarily.
  *
  * Solution:
- *   Sort the intervals based on smallest starting time and longest ending 
- *   time. For instance:
+ *   Sort the intervals based on the earliest start time and latest end time. 
+ *   For instance:
  *     ..........
  *     ......
  *       ........
  *         ...
  *              ...
- *   The idea is then to select an interval the covers the left-most uncovered
+ *   The idea is then to select an interval that covers the left-most uncovered
  *   point, while it is the longest among such intervals. This is done until all
  *   points are covered. If at any point there is a gap, then no solution can exist.
  * 
