@@ -206,3 +206,4 @@ cython_debug/
 
 # ignore the submission file
 submission.cpp
+docs.txt
