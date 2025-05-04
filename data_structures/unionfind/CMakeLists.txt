@@ -2,4 +2,4 @@
 add_executable(unionfind main.cpp)
 
 # Link the algorithms library
-target_link_libraries(unionfind PRIVATE algorithms -fsanitize=undefined -fsanitize=address)
+target_link_libraries(unionfind PRIVATE algorithms)

@@ -2,4 +2,4 @@
 add_executable(ljutnja main.cpp)
 
 # Link the algorithms library
-target_link_libraries(ljutnja PRIVATE algorithms -fsanitize=undefined -fsanitize=address)
+target_link_libraries(ljutnja PRIVATE algorithms)
