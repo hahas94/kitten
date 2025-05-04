@@ -1,0 +1,45 @@
+22
+<foo> be <bar> not <foo> <baf>
+<foo> be <bar> not <foo> <baf>
+a b c
+a b c
+a b c
+b b c
+<foo> b <bar>
+a b c
+<foo> b <foo>
+a b c
+<foo> <bar> <baz>
+<foo> <bar> <baz>
+<foo> <bar> <baz>
+<bar> <baz> <foo>
+how now brown <animal>
+<foo> now <color> cow
+<foo> now <color> cow
+how now brown <animal>
+who are you
+<a> <b> <a>
+who are you
+<a> <b> <a>
+<a> b
+c <a>
+<foo> b <foo>
+a <bar> <bar>
+a b
+a b c
+<foo> a <s> <foo> <s>
+b a <z> <z> <k>
+<a> b <a>
+a <a> <a>
+<foo> is <foo>
+life is life
+<foo> <foo> <bar>
+yes yes no
+<foo> <bar> <baz>
+x y z
+a <b> c <k> <b> <s> <b> <s> <s> <k>
+a c <b> <m> <m> <s> <b> <l> <s> <l>
+a b <y> <y> <x> <x>
+a <b> <zz> <xx> <xx> <b>
+a b <c> <d> <d> <y> <y> <x> <x> <c>
+a <b> <c> <c> <e> <zz> <xx> <xx> <b> c
