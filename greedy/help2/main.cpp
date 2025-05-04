@@ -106,16 +106,6 @@ phrase_t find_phrase(phrase_t& pattern1, phrase_t& pattern2){
         return w.at(0) == '<' && w.at(w.size()-1) == '>';
     };
 
-    // while not all placeholders mapped:
-    //      go through the list
-    //      if a w, w encountered, check whether identical
-    //      if w, p or p, w encountered, map one, check and restart
-    //      if p, p encountered and one or both mapped, check and restart
-    //      if p, p encountered and none mapped, continue
-
-    // when the loop is done, go through the lists and check for equality.
-    // whenever p, p encountered, set them to "a".
-
     bool all_placeholders_mapped {false};
     while(!all_placeholders_mapped){
         all_placeholders_mapped = true;
