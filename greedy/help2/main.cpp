@@ -8,12 +8,12 @@
  *  is to replace all placeholders with words in order to make a phrase.   
 *
  * Solution:
- *  We start by treating each adjacent pairs of strings. While not all 
+ *  Start solution by treating each adjacent pairs of strings. While not all 
  *  placeholders have been treated, start looping over the patterns. 
  *  Each time a change is made to either patterns, restart the loop. This
  *  because earlier pairs may be dependent on the latest change, hence the need
  *  to restart. A change is either an explicit correspondence between a word and
- *  a placeholder have been detected, or an implicit one based on earlier
+ *  a placeholder, or an implicit one based on earlier
  *  detected changes, where the change has been recorded in maps.
  * 
  *  Once all pairs of strings have been treated, the only strings that are
@@ -78,6 +78,18 @@ phrase_t make_pattern(std::string& line){
 
 /**
  * @brief Runs an algorithm to find a phrase matching two patterns.
+ * 
+ * Start solution by treating each adjacent pairs of strings. While not all 
+ * placeholders have been treated, start looping over the patterns. 
+ * Each time a change is made to either patterns, restart the loop. This
+ * because earlier pairs may be dependent on the latest change, hence the need
+ * to restart. A change is either an explicit correspondence between a word and
+ * a placeholder, or an implicit one based on earlier
+ * detected changes, where the change has been recorded in maps.
+ * 
+ * Once all pairs of strings have been treated, the only strings that are
+ * still placeholders are those for whom no word exists, thus replace those
+ * with an arbitrary string.
  * 
  * @param pattern1: A pattern is phrase with words and placeholders. 
  * @param pattern2 A pattern is phrase with words and placeholders. 
