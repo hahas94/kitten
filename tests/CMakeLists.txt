@@ -1,8 +1,7 @@
 find_package(Catch2 REQUIRED)
 
 add_executable(test_unionfind test_unionfind.cpp)
-target_link_libraries(test_unionfind PRIVATE Catch2::Catch2WithMain algorithms  
-                      -fsanitize=undefined -fsanitize=address)
+target_link_libraries(test_unionfind PRIVATE Catch2::Catch2WithMain algorithms)
 
 include(CTest)
 include(Catch)
