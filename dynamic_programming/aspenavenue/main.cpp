@@ -74,6 +74,14 @@ double euclidean_dist(double x1, double y1, double x2, double y2){
 
 /**
  * @brief Find the minimum distance of moving trees to their plant positions.
+ *  
+ *  Initially, all trees are sorted based on their position to the start of the 
+ *  road. This because a tree does not need to be planted in a far position when
+ *  there are places close to it. Then the DP table is filled with what we know
+ *  about the problem, and work backwards step by step based on this knowledge
+ *  to fill the rest. The DP table is a tensor, where it gives the cost of 
+ *  planting a specific tree in a position, either on left side or right side 
+ *  of the road. 
  * 
  * @param n_trees: Number of trees to plant. 
  * @param length: Length of the road. 
