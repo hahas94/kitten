@@ -31,7 +31,7 @@ cat <<EOT >> $dir_name/$problem_name/CMakeLists.txt
 add_executable($problem_name main.cpp)
 
 # Link the algorithms library
-target_link_libraries($problem_name PRIVATE algorithms -fsanitize=undefined -fsanitize=address)
+target_link_libraries($problem_name PRIVATE algorithms)
 EOT
 
 touch "$dir_name/$problem_name/main.cpp"
@@ -50,7 +50,7 @@ cat <<EOT >> $dir_name/$problem_name/main.cpp
  *
  **/
  
-#include "../../algorithms/$dir_name.hpp"
+//#include "../../algorithms/$dir_name.hpp"
 
 int main() {
     std::ios::sync_with_stdio(false);
