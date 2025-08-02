@@ -21,8 +21,6 @@
 #include <unordered_set>
 #include <vector>
 
-
-
 struct Video {
     const int length;
     const std::string categories;
