@@ -10,7 +10,8 @@
  * Solution:
  *  We can use the Union Find data structure to create the tree step by step,
  *  for each edge finding the leaf node of it with the help of the previous
- *  parent vertex.
+ *  parent vertex, while keeping track of the possibility of illegal vertices
+ *  occurring.
  *
  **/
 
