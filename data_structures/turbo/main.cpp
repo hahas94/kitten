@@ -2,17 +2,17 @@
 * main.cpp
  * -----------------
  * Turbo (https://open.kattis.com/problems/turbo):
- *   
+ *  Given an array of distinct integers {1, 2, ..., N}, sort them
+ *  through swapping elements, in the order 1, N, 2, N-1, 3, N-2 ...etc.
+ *  count the number of swaps required for sorting each element.
  *
  * Solution:
- * [6, 3, 4, 1, 5, 2, 8, 7]
- * [1, 1, 1, 1, 1, 1, 1, 1]
- * 1:  [1, 1, 1, 0, 1, 1, 1, 1] (3)
- * 8:  [1, 1, 1, 0, 1, 1, 0, 1] (1)
- * 2:  [1, 1, 1, 0, 1, 0, 0, 1] (4)
- * 7:  [1, 1, 1, 0, 1, 0, 0, 0] (0)
- * 3:  [1, 0, 1, 0, 1, 0, 0, 0] (1)
- * 6:  [1, 0, 1, 0, 1, 0, 0, 0] (1)
+ *  Given a binary indexed tree of only 1's of size N and an element to
+ *  be sorted, we can count the number of elements to its left or right
+ *  (and to the end of the tree) that are still active by making a sum query.
+ *  This gives us the number of swaps needed. Then make that element inactive
+ *  by turning it into 0 in the tree, meaning removing it from the tree.
+ *
  **/
 
 #include <iostream>
@@ -57,7 +57,6 @@ int main() {
                 dist = tree.sum(N) - tree.sum(index);
                 right_ptr--;
             }
-            // std::cout << tree << "\n";
             tree.add(index - 1, -1);
             oss << dist << "\n";
             counter++;
