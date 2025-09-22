@@ -26,8 +26,8 @@ BIT::~BIT(){}
 /**
  * @brief Incrementing an element in the array.
  * 
- * @param index: position of element 
- * @param delta: value to increment by. 
+ * @param index: Position of the element. Assuming 0-based array indexing.
+ * @param delta: Value to increment by.
  */
 void BIT::add(std::size_t index, int delta){
     checkIndex(index);
@@ -41,16 +41,31 @@ void BIT::add(std::size_t index, int delta){
 /**
  * @brief Query the sum of array elements from position 0 up to index-1.
  * 
- * @param index: an index to query the cumulative sum at. 
+ * @param index: An index to query the cumulative sum at.
+ *               Assuming 0-based array indexing.
  * @return long long int: the cumulative sum. 
  */
 long long int BIT::sum(std::size_t index) const{
     checkIndex(index);
     long long int sum {0};
 
+    /*
+     * Ex. 7 in binary is 00111
+     * sum(7) = a[0] + a[1] + .. + a[6] without BIT.
+     * sum(7) = t[7] + a[6] + t[4] wit BIT.
+     * We get this by unsetting the last set bit in the binary repr. of 7
+     * until there is no more bits set, i.e. reaching the bottom of the tree.
+     * We can get -7 in binary using two's complement, which is flipping all
+     * bits and adding 1: 11001.
+     * The & operator can be used to get the last set bit:
+     * 00111 & 11001 = 00001
+     * 00111 - 00001 = 00110.
+     *
+     */
+
     while(index > 0){
         sum += tree.at(index);
-        index -= index & -index;  // unsetting the last set bit of index
+        index -= index & -index;
     }
 
     return sum;
