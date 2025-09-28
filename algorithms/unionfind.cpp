@@ -4,21 +4,21 @@
  * Description:
  *  Implementation file containing definitions for the unionfind data structure. 
  *  
- *  This data structure stores a number of sets, and provides functionality to merge
- *  two sets, as well as checking whether two elements belong to the same set.
- *  Internally, a set is represented as a tree with a root. Initially each element 
- *  belongs to its own set and thus is a parent of its own tree. When two sets are
- *  merged, the smaller tree becomes a child of the larger tree.
- * 
- *  Since the trees are being balanced, these operations have an amortized O(log n)
- *  time complexity.
+ *  This data structure stores a number of sets, and provides functionality to
+ *  merge two sets, as well as checking whether two elements belong to the same
+ *  set. Internally, a set is represented as a tree with a root. Initially,
+ *  each element belongs to its own set and thus is a parent of its own tree.
+ *  When two sets are merged, the smaller tree becomes a child of the larger
+ *  tree.
+ *  Since the trees are being balanced, these operations have an amortized
+ *  O(log n) time complexity.
  * */
 
 #include "unionfind.hpp"
 
 /**
  * @brief Construct a new UnionFind:: UnionFind object.
- *        Initially each element belongs to their own sets of size 1.
+ *        Initially, each element belongs to their own sets of size 1.
  * 
  * @param n: number of elements 
  */
@@ -32,7 +32,7 @@ UnionFind::UnionFind(int n)
     }
 
 UnionFind::~UnionFind(){
-    // Included for interface completness.
+    // Included for interface completeness.
 }
 
 
