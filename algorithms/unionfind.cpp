@@ -125,6 +125,8 @@ void UnionFind::join(int x, int y){
     int x_parent = find(x);
     int y_parent = find(y);
 
+    if (x_parent == y_parent) return;
+
     if(sizes[x_parent] <= sizes[y_parent]){
         parents[x_parent] = y_parent;
         sizes[y_parent] += sizes[x_parent];
