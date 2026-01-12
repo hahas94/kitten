@@ -66,18 +66,18 @@ It includes algorithms from several different areas, listed below.
 │ └───┘│
 └─────┘
 ```
-- Greedy algorithms
-```
-S ── 8 ── 3 ── 1
-\
-6 ── 4 ── 2
-```
 - Geometry
 ```
 A ●──────● B
        /
       /
      ● C
+```
+- Greedy algorithms
+```
+S ── 8 ── 3 ── 1
+\
+6 ── 4 ── 2
 ```
 - Miscellaneous/Simulation problems
 ```
