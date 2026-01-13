@@ -47,11 +47,11 @@ the specified algorithm.
 A library implementing some advanced algorithms for usage in problem-solving. 
 It includes algorithms from several different areas, listed below. 
 
-## Problem areas:
+## Problem areas
 - Data structures   
 ```
 ┌───┬───┬───┬───┐
-│ x │ y │ z │ w │
+│ x │ 1 │ z │ w │
 └───┴───┴───┴───┘
 ```
 - Recursion/Dynamic programming
