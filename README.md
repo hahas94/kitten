@@ -36,11 +36,11 @@ boilerplate code. When run at the root:
 directory. If `puzzles` directory does not exist, then it is created as well.  
 
 `./algo_template.sh inverse` creates a header and an implementation file for 
-the `inverse` algorithm. 
+the `inverse` algorithm in the `algorithms` directory. 
 
 `./kattis_template.sh math/fastinverse inverse` creates a single file that can 
 be used for submission by merging the code from the `fastinverse` problem and 
-the `inverse` algorithm, as it is assumed that the solution this problem uses 
+the `inverse` algorithm, as it is assumed that the solution to this problem uses 
 the specified algorithm.
 
 ## Algorithms
