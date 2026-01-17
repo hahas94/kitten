@@ -13,6 +13,14 @@
  *   those points that keep making a left-turn when added to the list of
  *   already found polygon points, i.e. completes the polygon while keeping
  *   it convex.
+ *   Given a line and a point, how do we determine whether the point makes
+ *   a cw or ccw turn with respect to the line. From vector product we know
+ *   that the resulting vector has a magnitude equal to the parallelogram
+ *   formed by the two vectors, and the sign of that area determines how the
+ *   two vectors are positioned. VxW results in a positive area when W is left
+ *   of V, else it is negative. Thus we need to fins the sign of this area.
+ *   The two vectors in question are V=P1->P2 and W=P1->P3.
+ *
  *   The time complexity of this algorithm is O(n*log(n)), n being the number
  *   of points, where the sorting step is the most heavy.
  *
@@ -20,6 +28,13 @@
 
 #include "convex_hull.hpp"
 
+/**
+ * Given a set of points, scan them to find the convex hull using
+ * the Graham scan algorithm.
+ *
+ * @param points: A vector of points with (x, y) coordinates.
+ * @return: A vector of the original points that constitute the hull.
+ */
 points_t scan(const points_t& points) {
     // Find the point with the lowest y-value.
     const auto it = std::ranges::min_element(points,
