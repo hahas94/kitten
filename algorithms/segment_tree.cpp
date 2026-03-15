@@ -2,8 +2,17 @@
  * segment_tree.cpp
  * ------------------
  * Description:
- *   Implementation file containing definitions for the segment_tree problem.
+ *   Implementation file containing definitions for the Segment tree
+ *   data structure.
  *
+ *   This data structure finds maximum/minimum elements in range queries
+ *   efficiently. It constructs an array twice the size of the input data,
+ *   and computes the max/min element by building a (virtual) tree and
+ *   recursively compute max/min of two adjacent nodes.
+ *   Both finding min/max in a range or updating an element has O(log(n))
+ *   time-complexity.
+ *
+ *  Ex.
  *   data = [6, 10, 5, 2, 7, 1, 0, 9]
  *   tree = [0, 0, 0, 0, 0, 0, 0, 0, 6, 10, 5, 2, 7, 1, 0, 9]
  *   completed_tree = [0, 10, 10, 9, 10, 5, 7, 9, 6, 10, 5, 2, 7, 1, 0, 9]
@@ -18,9 +27,13 @@
  * */
 
 #include "segment_tree.hpp"
-
 #include <utility>
 
+/**
+ * Initializing the Segment tree.
+ * @param data: The data to perform range queries on.
+ * @param comparator: A function for performing comparisons between elements.
+ */
 template<typename T>
 RangeQuery<T>::RangeQuery(const std::vector<T>& data,
                           std::function<T(T, T)>  comparator) :
@@ -40,6 +53,12 @@ RangeQuery<T>::RangeQuery(const std::vector<T>& data,
 template<typename T>
 RangeQuery<T>::~RangeQuery() = default;
 
+/**
+ * Updating an element in the array.
+ * Recursively update the tree as well.
+ * @param index: Original position.
+ * @param value: Value to update element with.
+ */
 template<typename T>
 void RangeQuery<T>::update(std::size_t index, const T value) {
     index += _size;
@@ -56,6 +75,12 @@ void RangeQuery<T>::update(std::size_t index, const T value) {
     }
 }
 
+/**
+ * Query max/min element in given range.
+ * @param from: Start index.
+ * @param to: End index (exclusive).
+ * @return max/min element in range.
+ */
 template<typename T>
 T RangeQuery<T>::query(std::size_t from, std::size_t to) {
     from += _size;
@@ -77,7 +102,7 @@ T RangeQuery<T>::query(std::size_t from, std::size_t to) {
             minmax = _comparator(minmax, _tree[to]);
         }
 
-        //move to the next level of the tree.
+        // Move to the next level of the tree.
         from /= 2;
         to /= 2;
     }
@@ -85,19 +110,22 @@ T RangeQuery<T>::query(std::size_t from, std::size_t to) {
     return minmax;
 }
 
+// RangeMaxQuery: child class of RangeQuery with max() as comparator.
 template<typename T>
 RangeMaxQuery<T>::RangeMaxQuery(const std::vector<T> &data) :
     RangeQuery<T>(data, [](T a, T b) { return std::max(a, b); }) {}
 
-template<typename T>
-RangeMaxQuery<T>::~RangeMaxQuery() = default;
+//
+// template<typename T>
+// RangeMaxQuery<T>::~RangeMaxQuery() = default;
 
+// RangeMinQuery: child class of RangeQuery with min() as comparator.
 template<typename T>
 RangeMinQuery<T>::RangeMinQuery(const std::vector<T> &data) :
     RangeQuery<T>(data, [](T a, T b) { return std::min(a, b); }) {}
 
-template<typename T>
-RangeMinQuery<T>::~RangeMinQuery() = default;
+// template<typename T>
+// RangeMinQuery<T>::~RangeMinQuery() = default;
 
 // Explicitly defining the object templates for some common data types.
 

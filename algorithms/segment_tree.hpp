@@ -20,9 +20,10 @@ class RangeQuery {
     public:
         explicit RangeQuery(const std::vector<T>& data,
                             std::function<T(T, T)>  comparator);
-        ~RangeQuery();
+        virtual ~RangeQuery();
         void update(std::size_t index, T value);
         T query(std::size_t from, std::size_t to);
+        virtual void dummy() = 0;  // pure virtual, making class abstract.
     private:
         std::size_t _size;
         std::vector<T> _tree;
@@ -33,14 +34,16 @@ template <typename T>
 class RangeMaxQuery : public RangeQuery<T> {
     public:
         explicit RangeMaxQuery(const std::vector<T>& data);
-        ~RangeMaxQuery();
+        void dummy() override {};
+        // ~RangeMaxQuery();
 };
 
 template <typename T>
 class RangeMinQuery : public RangeQuery<T> {
     public:
         explicit RangeMinQuery(const std::vector<T>& data);
-        ~RangeMinQuery();
+        void dummy() override {};
+        // ~RangeMinQuery();
 };
 
 #endif
