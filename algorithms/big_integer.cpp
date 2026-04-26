@@ -14,13 +14,16 @@
 
 #include "big_integer.hpp"
 
+#include <csignal>
+
 /**
  * Initialize object.
  * @param num: Some integer in string format. Signed numbers allowed.
  */
 BigInteger::BigInteger(const std::string& num)
     {
-    _repr = num;
+    if (num.empty()) return;
+
     int start {0}; // To skip treating sign in the loop below.
     if (num[0] == '-') {
         _is_negative = true;
@@ -29,9 +32,9 @@ BigInteger::BigInteger(const std::string& num)
     // Ex. num=124579113159 --> digits = [579113159, 124]
     int i {static_cast<int> (num.length())};
     while (i > start) {
-        const int pos {std::max(start, i - _BASE_LENGTH)};
+        const int pos {std::max(start, i - BASE_LENGTH)};
         _digits.push_back(std::stol(num.substr(pos, i - pos)));
-        i -= _BASE_LENGTH;
+        i -= BASE_LENGTH;
     }
     }
 
@@ -50,15 +53,33 @@ std::size_t BigInteger::size() const {
  * @return number as string.
  */
 std::string BigInteger::to_string() const {
-    return _repr;
+    if (_digits.empty()) return "0";
+
+    std::string result;
+
+    if (_is_negative) {
+        result += '-';
+    }
+
+    // Most significant digit (no padding)
+    result += std::to_string(_digits.back());
+
+    // Remaining digits (zero-padded)
+    for (int i = static_cast<int> (_digits.size()) - 2; i >= 0; --i) {
+        std::string chunk = std::to_string(_digits[i]);
+        result += std::string(BASE_LENGTH - chunk.length(), '0') + chunk;
+    }
+
+    return result;
 }
 
 /**
- * Get the underlying digits.
- * @return Digit vector.
+ * Get the digit at a given position.
+ * @return Integer.
  */
-std::vector<uint32_t> BigInteger::digits() const{
-    return _digits;
+uint32_t BigInteger::digit(const std::size_t pos) const {
+    if (pos >= _digits.size()) return 0;
+    return _digits[pos];
 }
 
 /**
@@ -84,26 +105,38 @@ bool BigInteger::is_negative() const {
  */
 BigInteger BigInteger::operator+(const BigInteger& bigint) const {
     const bool bigint_is_negative {bigint.is_negative()};
-    const bool this_is_larger {!(this->_signless_less_than(bigint))};
-    std::string result;
+    std::vector<uint32_t> result;
     bool result_is_negative;
 
     if (!_is_negative && !bigint_is_negative) {
         result = _sum(bigint);
         result_is_negative = false;
     } else if (!_is_negative) {
-        result = _diff(bigint);
-        result_is_negative = !this_is_larger;
+        const bool is_less {this->_signless_less_than(bigint)};
+        if (!is_less) {
+            result = _diff(bigint);
+            result_is_negative = false;
+        }
+        else {
+            result = bigint._diff(*this);
+            result_is_negative = true;
+        }
     } else if (!bigint_is_negative) {
-        result = _diff(bigint);
-        result_is_negative = this_is_larger;
+        const bool is_less {this->_signless_less_than(bigint)};
+        if (!is_less) {
+            result = _diff(bigint);
+            result_is_negative = true;
+        }
+        else {
+            result = bigint._diff(*this);
+            result_is_negative = false;
+        }
     } else {
         result = _sum(bigint);
         result_is_negative = true;
     }
-
-    if (result != "0" && result_is_negative) result = "-" + result;
-    return BigInteger(result);
+    
+    return {std::move(result), result_is_negative};
 }
 
 /**
@@ -113,13 +146,13 @@ BigInteger BigInteger::operator+(const BigInteger& bigint) const {
  */
 BigInteger BigInteger::operator-(const BigInteger &bigint) const {
     const bool bigint_is_negative {bigint.is_negative()};
-    const bool this_is_larger {!(this->_signless_less_than(bigint))};
-    std::string result;
+    std::vector<uint32_t> result;
     bool result_is_negative;
 
     if (_is_negative && bigint_is_negative) {
-        result = _diff(bigint);
-        result_is_negative = this_is_larger;
+        const bool is_less {this->_signless_less_than(bigint)};
+        result = bigint._diff(*this);
+        result_is_negative = !is_less;
     } else if (_is_negative) {
         result = _sum(bigint);
         result_is_negative = true;
@@ -127,16 +160,22 @@ BigInteger BigInteger::operator-(const BigInteger &bigint) const {
         result = _sum(bigint);
         result_is_negative = false;
     } else {
-        result = _diff(bigint);
-        result_is_negative = !this_is_larger;
+        const bool is_less {this->_signless_less_than(bigint)};
+        if (!is_less) {
+            result = _diff(bigint);
+            result_is_negative = false;
+        }
+        else {
+            result = bigint._diff(*this);
+            result_is_negative = true;
+        }
     }
 
-    if (result != "0" && result_is_negative) result = "-" + result;
-    return BigInteger(result);
+    return {std::move(result), result_is_negative};
 }
 
 /**
- * Test whether this and a string representation of an integer are equal.
+ * Test whether this and a string representation of some integer are equal.
  * @param bigint String representation of some integer.
  * @return Equality truthness.
  */
@@ -150,7 +189,13 @@ bool BigInteger::operator==(const std::string& bigint) const {
  * @return Equality truthness.
  */
 bool BigInteger::operator==(const BigInteger &bigint) const {
-    return _digits == bigint.digits() && _is_negative == bigint.is_negative();
+    if (size() != bigint.size()) return false;
+    if (_is_negative != bigint.is_negative()) return false;
+
+    for (std::size_t i = 0; i < _digits.size(); i++) {
+        if (_digits[i] != bigint.digit(i)) return false;
+    }
+    return true;
 }
 
 bool BigInteger::operator<(const BigInteger& bigint) const {
@@ -164,11 +209,10 @@ bool BigInteger::operator<(const BigInteger& bigint) const {
     if (*this == bigint) return false;
 
     bool le {false};
-    const std::vector<uint32_t> bigint_digits = bigint.digits();
     int i {static_cast<int> (this->size() - 1)};
     while (i >= 0) {
-        if (_digits[i] > bigint_digits[i]) {le = false; break;}
-        if (_digits[i] < bigint_digits[i]) {le = true; break;}
+        if (_digits[i] > bigint.digit(i)) {le = false; break;}
+        if (_digits[i] < bigint.digit(i)) {le = true; break;}
         i--;
     }
     if (both_negative && !le) return true;
@@ -198,85 +242,87 @@ std::ostream& operator<<(std::ostream &os, const BigInteger& bigint) {
 
 // ------------ PRIVATE METHODS ------------
 
+// Constructor based on digits vector and sign
+BigInteger::BigInteger(std::vector<uint32_t>&& digits, bool is_negative) {
+    while (digits.size() - 1 > 0 && digits.back() == 0) {
+        digits.pop_back();
+    }
+
+    if (digits.back() == 0) {
+        is_negative = false; // normalize -0 → 0
+    }
+    _digits = digits;
+    _is_negative = is_negative;
+}
+
 // Find the sum between this and another bigint, regardless of signs.
-std::string BigInteger::_sum(const BigInteger &bigint) const {
-    const std::vector<uint32_t> bigint_digits = bigint.digits();
-    std::string result;
-    const std::size_t max_len {std::max(_digits.size(), bigint_digits.size())};
+std::vector<uint32_t> BigInteger::_sum(const BigInteger &bigint) const {
+    const std::size_t max_len {std::max(_digits.size(), bigint.size())};
+    std::vector<uint32_t> result;
+    result.resize(max_len+1);
 
     uint32_t carry {0};
     for (std::size_t i {0}; i < max_len || carry > 0; i++) {
         uint32_t sum {carry};
         if (i < _digits.size()) {sum += _digits[i];}
-        if (i < bigint_digits.size()) {sum += bigint_digits[i];}
-        const uint32_t remainder = sum % _BASE;
-        std::string remainder_str = std::to_string(remainder);
-        std::string padding (_BASE_LENGTH - remainder_str.size(), '0');
-        result = padding + remainder_str + result;
-        carry = sum / _BASE;
+        if (i < bigint.size()) {sum += bigint.digit(i);}
+        result[i] = sum % BASE;
+        carry = sum / BASE;
     }
-    result = remove_leading_zeros(result);
     return result;
 }
 
 // Find the difference between this and another bigint, regardless of signs.
-std::string BigInteger::_diff(const BigInteger &bigint) const {
-    const std::vector<uint32_t> bigint_digits = bigint.digits();
-    std::string result;
-    const std::size_t max_len {std::max(_digits.size(), bigint_digits.size())};
-    const std::vector<uint32_t> a = (this->_signless_less_than(bigint))
-        ? bigint_digits : _digits;
-    const std::vector<uint32_t> b = (this->_signless_less_than(bigint))
-        ? _digits : bigint_digits;
+std::vector<uint32_t> BigInteger::_diff(const BigInteger &bigint) const {
+    const std::size_t max_len {std::max(_digits.size(), bigint.size())};
+
+    std::vector<uint32_t> result;
+    result.resize(max_len+1);
 
     int64_t carry {0};
     for (std::size_t i {0}; i < max_len; i++) {
-        int64_t diff {a[i] - carry};
-
-        if (i < b.size()) {diff -= b[i];}
+        const int64_t a {i < size() ? _digits[i] - carry : 0 - carry};
+        const int64_t b {i < bigint.size() ? bigint.digit(i) : 0};
+        int64_t diff {a - b};
 
         if (diff < 0) {
-            diff += _BASE;
+            diff += BASE;
             carry = 1;
         } else carry = 0;
 
-        std::string remainder_str = std::to_string(diff);
-        std::string padding (_BASE_LENGTH - remainder_str.size(), '0');
-        result = padding + remainder_str + result;
+        result[i] = diff;
     }
-    result = remove_leading_zeros(result);
     return result;
 }
 
 // Whether two big integers are equal in digits.
 bool BigInteger::_signless_equals(const BigInteger &bigint) const {
-    return _digits == bigint.digits();
+    if (size() != bigint.size()) return false;
+
+    for (std::size_t i = 0; i < _digits.size(); i++) {
+        if (_digits[i] != bigint.digit(i)) return false;
+    }
+    return true;
 }
 
 // Whether this is less than some other bigint regardless of their signs.
 bool BigInteger::_signless_less_than(const BigInteger& bigint) const {
-    if (this->size() < bigint.size()) return true;
-    if (this->size() > bigint.size()) return false;
-    if (this->_signless_equals(bigint)) return false;
+    const std::size_t a_size = _digits.size();
+    const std::size_t b_size = bigint._digits.size();
 
-    const std::vector<uint32_t> bigint_digits = bigint.digits();
-    int i {static_cast<int> (this->size() - 1)};
-    while (i >= 0) {
-        if (_digits[i] > bigint_digits[i]) return false;
-        if (_digits[i] < bigint_digits[i]) return true;
-        i--;
+    if (a_size != b_size) {
+        return a_size < b_size;
     }
-    return false; // Unreachable
-}
 
-// Remove leading zeros from a number.
-std::string& BigInteger::remove_leading_zeros(std::string &result) {
-    auto nonzero = [](const char s) -> bool {return s != '0';};
-    const auto it = std::ranges::find_if(result, nonzero);
-    if (it == result.end()) result = "0"; // x - x = "00..0"
-    else result = result.substr(std::distance(result.begin(), it), result.size());
+    // Same length, compare from most significant digit
+    for (std::size_t i = a_size; i-- > 0;) {
+        if (_digits[i] != bigint._digits[i]) {
+            return _digits[i] < bigint._digits[i];
+        }
+    }
 
-    return result;
+    // Equal
+    return false;
 }
 
 // ============== END OF FILE ==============

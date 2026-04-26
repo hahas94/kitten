@@ -9,6 +9,7 @@
 #define BIG_INTEGER_HPP
 
 #include <iostream>
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -20,7 +21,7 @@ public:
     std::size_t size() const;
     std::string to_string() const;
 
-    std::vector<uint32_t> digits() const;
+    uint32_t digit(std::size_t pos) const;
     char sign() const;
     bool is_negative() const;
 
@@ -36,18 +37,17 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const BigInteger& bigint);
 
 private:
-    static constexpr uint32_t _BASE {1000000000}; // class constant value
-    static constexpr int _BASE_LENGTH {9};
+    static constexpr uint32_t BASE {1000000000}; // class constant value
+    static constexpr int BASE_LENGTH {9};
     bool _is_negative {false};
-    std::string _repr {};
     std::vector<uint32_t> _digits {};
 
-    std::string _sum(const BigInteger& bigint) const;
-    std::string _diff(const BigInteger& bigint) const;
+    BigInteger(std::vector<uint32_t>&& digits, bool is_negative);
+
+    std::vector<uint32_t> _sum(const BigInteger& bigint) const;
+    std::vector<uint32_t> _diff(const BigInteger& bigint) const;
     bool _signless_equals(const BigInteger& bigint) const;
     bool _signless_less_than(const BigInteger& bigint) const;
-
-    static std::string& remove_leading_zeros(std::string& result);
 };
 
 #endif
